@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATOSA - Alumni App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    .phone-frame {
+      width: 100%;
+      max-width: 400px;
+      margin: 20px auto;
+      background: white;
+      border-radius: 40px;
+      border: 12px solid #000;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .status-bar {
+      background: linear-gradient(135deg, #0B4F2B 0%, #003A70 100%);
+      color: white;
+      padding: 8px 16px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .app-header {
+      background: linear-gradient(135deg, #0B4F2B 0%, #003A70 100%);
+      color: white;
+      padding: 16px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .app-header h1 {
+      font-size: 20px;
+    }
+
+    .app-content {
+      padding: 20px;
+      height: 500px;
+      overflow-y: auto;
+      background: #f9f9f9;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .user-card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .user-card .avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0B4F2B 0%, #003A70 100%);
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 32px;
+    }
+
+    .user-card h2 {
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .user-card p {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .menu-item {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .menu-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .menu-item .icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .menu-item p {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #0B4F2B 0%, #003A70 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 14px;
+      cursor: pointer;
+      width: 100%;
+      margin: 8px 0;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      transform: scale(1.02);
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      background: white;
+      border-top: 1px solid #ddd;
+      padding: 8px 0;
+    }
+
+    .nav-item {
+      flex: 1;
+      text-align: center;
+      padding: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      border-top: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .nav-item.active {
+      color: #0B4F2B;
+      border-top-color: #0B4F2B;
+    }
+
+    .nav-item .icon {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .qr-code {
+      width: 200px;
+      height: 200px;
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+      margin: 20px auto;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #999;
+      border: 2px solid #0B4F2B;
+    }
+
+    .membership-card {
+      background: linear-gradient(135deg, #0B4F2B 0%, #003A70 100%);
+      color: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 16px 0;
+      text-align: center;
+    }
+
+    .membership-card h3 {
+      font-size: 14px;
+      margin-bottom: 8px;
+      opacity: 0.9;
+    }
+
+    .membership-card .number {
+      font-size: 24px;
+      font-weight: bold;
+      font-family: monospace;
+      margin: 12px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span>9:41</span>
+      <span>ATOSA</span>
+      <span>🔋</span>
+    </div>
+
+    <div class="app-header">
+      <div style="font-size: 24px">🎓</div>
+      <h1>ATOSA</h1>
+    </div>
+
+    <div class="app-content">
+      <!-- Home Screen -->
+      <div class="screen active" id="homeScreen">
+        <div class="user-card">
+          <div class="avatar">👤</div>
+          <h2>Demo User</h2>
+          <p>Member ID: ATOSA-26-0001</p>
+        </div>
+
+        <div class="menu-grid">
+          <div class="menu-item" onclick="switchScreen('membership')">
+            <div class="icon">🎫</div>
+            <p>My Card</p>
+          </div>
+          <div class="menu-item" onclick="switchScreen('payments')">
+            <div class="icon">💳</div>
+            <p>Payments</p>
+          </div>
+          <div class="menu-item" onclick="switchScreen('sacco')">
+            <div class="icon">💰</div>
+            <p>SACCO</p>
+          </div>
+          <div class="menu-item" onclick="switchScreen('events')">
+            <div class="icon">📅</div>
+            <p>Events</p>
+          </div>
+          <div class="menu-item" onclick="switchScreen('documents')">
+            <div class="icon">📄</div>
+            <p>Docs</p>
+          </div>
+          <div class="menu-item" onclick="switchScreen('settings')">
+            <div class="icon">⚙️</div>
+            <p>Settings</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Membership Card Screen -->
+      <div class="screen" id="membershipScreen">
+        <div style="text-align: center; margin-top: 20px;">
+          <h3 style="margin-bottom: 16px;">Your Membership Card</h3>
+          <div class="membership-card">
+            <h3>ATOSA Alumni</h3>
+            <div class="number">ATOSA-26-0001</div>
+            <p>Demo User</p>
+          </div>
+          <div class="qr-code">📱 QR Code</div>
+          <button class="btn">Download PDF</button>
+          <button class="btn" onclick="switchScreen('home')" style="background: #999;">Back</button>
+        </div>
+      </div>
+
+      <!-- Payments Screen -->
+      <div class="screen" id="paymentsScreen">
+        <div style="margin-top: 20px;">
+          <h3 style="margin-bottom: 16px;">Make Payment</h3>
+          <input class="input-field" type="number" placeholder="Amount (UGX)" value="100000">
+          <select class="input-field">
+            <option>MTN Mobile Money</option>
+            <option>Airtel Money</option>
+            <option>Bank Transfer</option>
+          </select>
+          <button class="btn">Pay Now</button>
+          <button class="btn" onclick="switchScreen('home')" style="background: #999;">Back</button>
+        </div>
+      </div>
+
+      <!-- SACCO Screen -->
+      <div class="screen" id="saccoScreen">
+        <div style="margin-top: 20px;">
+          <h3 style="margin-bottom: 16px;">SACCO Account</h3>
+          <div style="background: white; padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+            <p style="color: #666; font-size: 13px;">Balance</p>
+            <h2 style="font-size: 28px; color: #0B4F2B;">850,000 UGX</h2>
+          </div>
+          <button class="btn">Withdraw Funds</button>
+          <button class="btn">View Transactions</button>
+          <button class="btn" onclick="switchScreen('home')" style="background: #999;">Back</button>
+        </div>
+      </div>
+
+      <!-- Events Screen -->
+      <div class="screen" id="eventsScreen">
+        <div style="margin-top: 20px;">
+          <h3 style="margin-bottom: 16px;">Upcoming Events</h3>
+          <div style="background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px;">
+            <h4 style="margin-bottom: 4px;">Annual Alumni Dinner</h4>
+            <p style="font-size: 13px; color: #666;">📅 July 15, 2024 @ 6:00 PM</p>
+            <p style="font-size: 13px; color: #666;">📍 Kampala Serena Hotel</p>
+          </div>
+          <div style="background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px;">
+            <h4 style="margin-bottom: 4px;">Sports Day</h4>
+            <p style="font-size: 13px; color: #666;">📅 August 5, 2024 @ 9:00 AM</p>
+            <p style="font-size: 13px; color: #666;">📍 Atutur School Grounds</p>
+          </div>
+          <button class="btn" onclick="switchScreen('home')" style="background: #999;">Back</button>
+        </div>
+      </div>
+
+      <!-- Documents Screen -->
+      <div class="screen" id="documentsScreen">
+        <div style="margin-top: 20px;">
+          <h3 style="margin-bottom: 16px;">My Documents</h3>
+          <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <p style="font-weight: 500;">Certificate.pdf</p>
+              <p style="font-size: 12px; color: #999;">2.4 MB</p>
+            </div>
+            <span>📥</span>
+          </div>
+          <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <p style="font-weight: 500;">Transcript.pdf</p>
+              <p style="font-size: 12px; color: #999;">1.8 MB</p>
+            </div>
+            <span>📥</span>
+          </div>
+          <button class="btn" onclick="switchScreen('home')" style="background: #999;">Back</button>
+        </div>
+      </div>
+
+      <!-- Settings Screen -->
+      <div class="screen" id="settingsScreen">
+        <div style="margin-top: 20px;">
+          <h3 style="margin-bottom: 16px;">Settings</h3>
+          <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <span>Notifications</span>
+            <input type="checkbox" checked>
+          </div>
+          <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <span>Dark Mode</span>
+            <input type="checkbox">
+          </div>
+          <div style="background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <span>Two-Factor Auth</span>
+            <input type="checkbox">
+          </div>
+          <button class="btn" style="background: #ef4444;">Logout</button>
+          <button class="btn" onclick="switchScreen('home')" style="background: #999;">Back</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item active" onclick="switchScreen('home')">
+        <div class="icon">🏠</div>
+        <div>Home</div>
+      </div>
+      <div class="nav-item" onclick="switchScreen('membership')">
+        <div class="icon">🎫</div>
+        <div>Card</div>
+      </div>
+      <div class="nav-item" onclick="switchScreen('payments')">
+        <div class="icon">💳</div>
+        <div>Pay</div>
+      </div>
+      <div class="nav-item" onclick="switchScreen('settings')">
+        <div class="icon">⚙️</div>
+        <div>Menu</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchScreen(screenName) {
+      // Hide all screens
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      
+      // Show selected screen
+      document.getElementById(screenName + 'Screen').classList.add('active');
+      
+      // Update nav items
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      event.target.closest('.nav-item')?.classList.add('active');
+    }
+  </script>
+</body>
+</html>
